@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Security Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<meta http-equiv="refresh" content="10">
+<style>
+body { font-family: Arial; background-color: #f4f4f4; padding: 20px; }
+.top-cards { display: flex; gap: 20px; margin-bottom: 30px; }
+.card { background: white; padding: 20px; flex: 1; text-align: center;
+        border-radius: 8px; box-shadow: 0px 0px 10px #ccc; }
+table { background: white; width: 100%; border-collapse: collapse; margin-bottom: 40px; }
+th, td { padding: 10px; text-align: center; border-bottom: 1px solid #ddd; }
+th { background-color: #333; color: white; }
+.malicious { color: red; font-weight: bold; }
+.low { color: orange; font-weight: bold; }
+.normal { color: green; font-weight: bold; }
+</style>
+</head>
+<body>
+<h1>Network Security Dashboard</h1>
+
+<div class="top-cards">
+  <div class="card"><h3>Open Ports</h3><p>{{ open_ports }}</p></div>
+  <div class="card"><h3>Total Risk Score</h3><p>{{ total_risk }}</p></div>
+  <div class="card"><h3>Honeypots</h3><p>{{ honeypots }}</p></div>
+</div>
+
+<h2>Port Activity Details</h2>
+<table>
+  <tr><th>Port</th><th>Activity</th><th>Risk</th><th>Source IP</th></tr>
+  {% for p in ports %}
+  <tr>
+    <td>{{ p.port }}</td>
+    <td class="{% if p.activity == 'MALICIOUS ACTIVITY' %}malicious{% elif p.activity == 'Normal Service' %}normal{% else %}low{% endif %}">{{ p.activity }}</td>
+    <td>{{ p.risk }}</td>
+    <td>{{ p.ip }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<h2>Risk Visualization</h2>
+<canvas id="riskChart" height="100"></canvas>
+
+<script>
+const ports = {{ ports | tojson }};
+new Chart(document.getElementById('riskChart'), {
+  type: 'bar',
+  data: {
+    labels: ports.map(p => 'Port ' + p.port),
+    datasets: [{
+      label: 'Risk Score',
+      data: ports.map(p => p.risk),
+      backgroundColor: ports.map(p =>
+        p.risk >= 8 ? 'red' : (p.risk >= 2 ? 'orange' : 'green'))
+    }]
+  },
+  options: { scales: { y: { beginAtZero: true, max: 10 } } }
+});
+</script>
+</body>
+</html>
