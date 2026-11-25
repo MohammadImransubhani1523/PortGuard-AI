@@ -2,7 +2,7 @@ import socket
 import time
 
 TARGET = "127.0.0.1"
-PORTS = {2222: 9, 3306: 6, 8080: 2}  # port: number of hits
+PORTS = {2222: 4, 3306: 5}  # port: number of hits
 
 for port, hits in PORTS.items():
     for _ in range(hits):

@@ -1,10 +1,12 @@
+import os
 import sqlite3
 
-DB_NAME = "scanner_results.db"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_NAME = os.path.join(BASE_DIR, "scanner_results.db")
 
 
 def get_db():
-    return sqlite3.connect(DB_NAME, check_same_thread=False)
+    return sqlite3.connect(DB_NAME, check_same_thread=False, timeout=10)
 
 
 def init_db():
